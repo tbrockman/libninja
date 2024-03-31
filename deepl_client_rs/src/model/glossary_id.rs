@@ -1,4 +1,5 @@
+use serde::{Serialize, Deserialize};
 use oasgen::OaSchema;
-use serde::{Deserialize, Serialize};
+///A unique ID assigned to a glossary.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct GlossaryId(pub String);

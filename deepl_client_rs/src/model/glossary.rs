@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use super::{GlossaryId, GlossarySourceLanguage, GlossaryTargetLanguage};
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct Glossary {
     ///The creation time of the glossary in the ISO 8601-1:2019 format (e.g.: `2021-08-03T14:16:18.329Z`).

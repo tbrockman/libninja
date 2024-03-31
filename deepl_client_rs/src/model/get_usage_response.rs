@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct GetUsageResponse {
     ///Characters translated so far in the current billing period.

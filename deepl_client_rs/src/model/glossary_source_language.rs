@@ -1,5 +1,7 @@
-use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize, oasgen::OaSchema)]
+use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
+///The language in which the source texts in the glossary are specified.
+#[derive(Debug, Clone, Serialize, Deserialize, oasgen::OaSchema)]
 pub enum GlossarySourceLanguage {
     #[serde(rename = "de")]
     De,

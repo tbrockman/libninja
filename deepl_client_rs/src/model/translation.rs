@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use super::SourceLanguage;
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct Translation {
     ///The language detected in the source text. It reflects the value of the `source_lang` parameter, when specified.

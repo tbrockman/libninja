@@ -1,5 +1,38 @@
-use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize, oasgen::OaSchema)]
+use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
+/**Language of the text to be translated. Options currently available:
+ * `BG` - Bulgarian
+ * `CS` - Czech
+ * `DA` - Danish
+ * `DE` - German
+ * `EL` - Greek
+ * `EN` - English
+ * `ES` - Spanish
+ * `ET` - Estonian
+ * `FI` - Finnish
+ * `FR` - French
+ * `HU` - Hungarian
+ * `ID` - Indonesian
+ * `IT` - Italian
+ * `JA` - Japanese
+ * `KO` - Korean
+ * `LT` - Lithuanian
+ * `LV` - Latvian
+ * `NB` - Norwegian (Bokmål)
+ * `NL` - Dutch
+ * `PL` - Polish
+ * `PT` - Portuguese (all Portuguese varieties mixed)
+ * `RO` - Romanian
+ * `RU` - Russian
+ * `SK` - Slovak
+ * `SL` - Slovenian
+ * `SV` - Swedish
+ * `TR` - Turkish
+ * `UK` - Ukrainian
+ * `ZH` - Chinese
+
+If this parameter is omitted, the API will attempt to detect the language of the text and translate it.*/
+#[derive(Debug, Clone, Serialize, Deserialize, oasgen::OaSchema)]
 pub enum SourceLanguage {
     #[serde(rename = "BG")]
     Bg,

@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct GetDocumentStatusResponse {
     ///The number of characters billed to your account. The characters will only be billed after a successful download request.

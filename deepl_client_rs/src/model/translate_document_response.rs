@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct TranslateDocumentResponse {
     ///A unique ID assigned to the uploaded document and the translation process. Must be used when referring to this particular document in subsequent API requests.

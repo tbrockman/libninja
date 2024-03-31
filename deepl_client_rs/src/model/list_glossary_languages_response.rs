@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use super::SupportedLanguag;
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct ListGlossaryLanguagesResponse {
     ///The list of supported languages

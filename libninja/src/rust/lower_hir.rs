@@ -232,6 +232,10 @@ pub fn generate_single_model_file(
     if let Some(import) = record.imports("super") {
         imports.push(import);
     }
+    config.derives.iter().for_each(|d| {
+        imports.push(import!(d));
+    });
+
     File {
         code: Some(create_struct(record, &config, spec)),
         imports,
@@ -319,8 +323,10 @@ fn create_enum_struct(e: &StrEnum, derives: &Vec<String>) -> TokenStream {
     });
     let name = e.name.to_rust_struct();
     let derives = derives_to_tokens(derives);
+    let docs = e.docs.clone().to_rust_code();
     quote! {
-        #[derive(Debug, Serialize, Deserialize #derives)]
+        #docs
+        #[derive(Debug, Clone, Serialize, Deserialize #derives)]
         pub enum #name {
             #(#enums,)*
         }
@@ -343,7 +349,9 @@ pub fn create_newtype_struct(
             quote! { , Default }
         })
         .unwrap_or_default();
+    let docs = schema.docs.clone().to_rust_code();
     quote! {
+        #docs
         #[derive(Debug, Clone, Serialize, Deserialize #default #derives)]
         pub struct #name(#(pub #fields),*);
     }
@@ -352,10 +360,12 @@ pub fn create_newtype_struct(
 pub fn create_typealias(name: &str, schema: &HirField) -> TokenStream {
     let name = name.to_rust_struct();
     let mut ty = schema.ty.to_rust_type();
+    let docs = schema.doc.clone().to_rust_code();
     if schema.optional {
         ty = quote! { Option<#ty> };
     }
     quote! {
+        #docs
         pub type #name = #ty;
     }
 }

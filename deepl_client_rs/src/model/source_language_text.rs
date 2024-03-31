@@ -1,5 +1,44 @@
-use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize, oasgen::OaSchema)]
+use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
+/**Language of the text to be translated. Options currently available:
+ * `AR` - Arabic [1]
+ * `BG` - Bulgarian
+ * `CS` - Czech
+ * `DA` - Danish
+ * `DE` - German
+ * `EL` - Greek
+ * `EN` - English
+ * `ES` - Spanish
+ * `ET` - Estonian
+ * `FI` - Finnish
+ * `FR` - French
+ * `HU` - Hungarian
+ * `ID` - Indonesian
+ * `IT` - Italian
+ * `JA` - Japanese
+ * `KO` - Korean
+ * `LT` - Lithuanian
+ * `LV` - Latvian
+ * `NB` - Norwegian (Bokmål)
+ * `NL` - Dutch
+ * `PL` - Polish
+ * `PT` - Portuguese (all Portuguese varieties mixed)
+ * `RO` - Romanian
+ * `RU` - Russian
+ * `SK` - Slovak
+ * `SL` - Slovenian
+ * `SV` - Swedish
+ * `TR` - Turkish
+ * `UK` - Ukrainian
+ * `ZH` - Chinese
+
+If this parameter is omitted, the API will attempt to detect the language of the text and translate it.
+
+[1] Please note that Arabic has not yet been added to the `/languages` endpoint because it does not
+yet support document translation; only text translation is supported for Arabic at this time. When
+document translation support is added for Arabic, we will a) remove this note and b) add Arabic to
+the `/languages` endpoint.*/
+#[derive(Debug, Clone, Serialize, Deserialize, oasgen::OaSchema)]
 pub enum SourceLanguageText {
     #[serde(rename = "AR")]
     Ar,

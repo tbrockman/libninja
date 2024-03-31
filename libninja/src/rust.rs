@@ -21,7 +21,7 @@ use ln_core::{
     copy_builtin_files, copy_builtin_templates, create_context, get_template_file,
     prepare_templates,
 };
-use mir::Ident;
+use mir::{import, Ident};
 use mir::{DateSerialization, IntegerSerialization};
 use mir_rust::format_code;
 use mir_rust::ToRustIdent;
@@ -428,6 +428,7 @@ fn write_request_module(spec: &HirSpec, opts: &PackageConfig) -> Result<()> {
             }
         })
         .unwrap_or_default();
+    opts.derives.iter().map(|d| imports.push(import!(d)));
 
     for operation in &spec.operations {
         let fname = operation.file_name();

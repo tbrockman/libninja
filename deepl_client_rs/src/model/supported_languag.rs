@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct SupportedLanguag {
     ///The language in which the source texts in the glossary are specified.

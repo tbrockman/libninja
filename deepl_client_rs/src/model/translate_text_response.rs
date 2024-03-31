@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use super::Translation;
+use oasgen::OaSchema;
 #[derive(Debug, Clone, Serialize, Deserialize, Default, oasgen::OaSchema)]
 pub struct TranslateTextResponse {
     #[serde(default, skip_serializing_if = "Option::is_none")]
