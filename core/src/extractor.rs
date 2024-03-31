@@ -11,8 +11,8 @@ use hir::{
     Record,
 };
 use hir::{Oauth2Auth, TokenAuth};
-use mir::{Doc, DocFormat, NewType};
 use mir::Ty;
+use mir::{Doc, DocFormat, NewType};
 pub use record::*;
 pub use resolution::*;
 pub use resolution::{schema_ref_to_ty, schema_ref_to_ty_already_resolved, schema_to_ty};
@@ -75,23 +75,40 @@ pub fn deanonymize_array_items(spec: &mut HirSpec, openapi: &OpenAPI) {
         .collect::<HashSet<_>>();
     let mut new_schemas = vec![];
     for (name, schema) in spec.schemas.iter_mut() {
-        let Record::Struct(s) = schema else {
-            continue;
-        };
-        for (field, schema) in s.fields.iter_mut() {
-            println!("{} {}", name, field);
-            let Ty::Array(item) = &mut schema.ty else {
-                continue;
-            };
-            let Ty::Any(Some(inner)) = item.as_mut() else {
-                continue;
-            };
-            let Some(name) = create_unique_name(&current_schemas, name, field) else {
-                continue;
-            };
-            let record = create_record(&name, inner, openapi);
-            *item = Box::new(Ty::model(&name));
-            new_schemas.push((name, record));
+        match schema {
+            Record::NewType(s) => {
+                for mut field in s.fields.iter_mut() {
+                    let Ty::Array(item) = &mut field.ty else {
+                        continue;
+                    };
+                    let Ty::Any(Some(inner)) = item.as_mut() else {
+                        continue;
+                    };
+                    let Some(name) = create_unique_name(&current_schemas, name, name) else {
+                        continue;
+                    };
+                    let record = create_record(&name, inner, openapi);
+                    *item = Box::new(Ty::model(&name));
+                    new_schemas.push((name, record));
+                }
+            }
+            Record::Struct(s) => {
+                for (field, schema) in s.fields.iter_mut() {
+                    let Ty::Array(item) = &mut schema.ty else {
+                        continue;
+                    };
+                    let Ty::Any(Some(inner)) = item.as_mut() else {
+                        continue;
+                    };
+                    let Some(name) = create_unique_name(&current_schemas, name, field) else {
+                        continue;
+                    };
+                    let record = create_record(&name, inner, openapi);
+                    *item = Box::new(Ty::model(&name));
+                    new_schemas.push((name, record));
+                }
+            }
+            _ => {}
         }
     }
     spec.schemas.extend(new_schemas);
@@ -332,7 +349,11 @@ pub fn extract_api_operations(spec: &OpenAPI, result: &mut HirSpec) -> Result<()
         let ret = match response_success {
             None => Ty::Unit,
             Some(ReferenceOr::Item(s)) => {
-                if matches!(s.kind, oa::SchemaKind::Type(oa::Type::Object(_))) {
+                if matches!(
+                    s.kind,
+                    oa::SchemaKind::Type(oa::Type::Object(_))
+                        | oa::SchemaKind::Type(oa::Type::Array(_))
+                ) {
                     eprintln!("{} needs a response model", name);
                     let model_name = format!("{}Response", name.to_case(Case::Pascal));
                     needs_response_model = Some((s, model_name.clone()));
