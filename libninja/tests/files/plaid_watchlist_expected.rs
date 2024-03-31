@@ -12,7 +12,7 @@ async fn main() {
     };
     let response = client
         .watchlist_screening_individual_create(search_terms)
-        .client_user_id("your client user id")
+        .client_user_id(ClientUserId("your client user id".to_owned()))
         .await
         .unwrap();
     println!("{:#?}", response);

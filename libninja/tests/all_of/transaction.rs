@@ -13,7 +13,7 @@ This field is returned for select financial institutions and comes as provided b
     pub authorized_datetime: Option<chrono::DateTime<chrono::Utc>>,
     ///The counterparties present in the transaction. Counterparties, such as the financial institutions, are extracted by Plaid from the raw description.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub counterparties: Vec<String>,
+    pub counterparties: Vec<TransactionCounterparty>,
     /**Date and time when a transaction was posted in [ISO 8601](https://wikipedia.org/wiki/ISO_8601) format ( `YYYY-MM-DDTHH:mm:ssZ` ).
 
 This field is returned for select financial institutions and comes as provided by the institution. It may contain default time values (such as 00:00:00).*/
@@ -29,11 +29,11 @@ This field is returned for select financial institutions and comes as provided b
 This field replaces the `transaction_type` field.*/
     pub payment_channel: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub personal_finance_category: Option<String>,
+    pub personal_finance_category: Option<PersonalFinanceCategory>,
     ///A link to the icon associated with the primary personal finance category. The logo will always be 100x100 pixels.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub personal_finance_category_icon_url: Option<String>,
-    pub transaction_code: String,
+    pub transaction_code: TransactionCode,
 }
 impl std::fmt::Display for Transaction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {

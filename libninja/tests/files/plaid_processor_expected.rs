@@ -3,7 +3,7 @@ use plaid::model::*;
 #[tokio::main]
 async fn main() {
     let client = PlaidClient::from_env();
-    let processor_token = "your processor token";
+    let processor_token = ProcessorToken("your processor token".to_owned());
     let response = client
         .processor_identity_match(processor_token)
         .user(IdentityMatchUser {
