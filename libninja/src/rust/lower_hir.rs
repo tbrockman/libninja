@@ -6,10 +6,10 @@ use quote::{quote, ToTokens};
 
 use hir::{HirField, HirSpec, NewType, Record, StrEnum, Struct};
 use ln_core::{ConfigFlags, PackageConfig};
-use mir::{Field, File, Ident, import, Import, Visibility};
+use mir::{import, Field, File, Ident, Import, Visibility};
 use mir::{DateSerialization, DecimalSerialization, IntegerSerialization, Ty};
-use mir_rust::{sanitize_filename, ToRustIdent};
 use mir_rust::ToRustCode;
+use mir_rust::{sanitize_filename, ToRustIdent};
 
 use crate::rust::codegen;
 use crate::rust::codegen::ToRustType;
@@ -309,10 +309,7 @@ pub fn create_sumtype_struct(
 fn create_enum_struct(e: &StrEnum, derives: &Vec<String>) -> TokenStream {
     let enums = e.variants.iter().filter(|s| !s.is_empty()).map(|s| {
         let original_name = s.to_string();
-        let mut s = original_name.clone();
-        if !s.is_empty() && s.chars().next().unwrap().is_numeric() {
-            s = format!("{}{}", e.name, s);
-        }
+        let s = e.variant_to_name(&original_name);
         let name = s.to_rust_struct();
         let serde_attr = codegen::serde_rename(&original_name, &name);
         quote! {

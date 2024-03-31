@@ -7,9 +7,9 @@ use ln_macro::rfunction;
 use mir::{File, Import, Ty};
 use mir_rust::format_code;
 
-use crate::PackageConfig;
-use crate::rust::codegen::{ToRustCode, ToRustType};
 use crate::rust::codegen::ToRustIdent;
+use crate::rust::codegen::{ToRustCode, ToRustType};
+use crate::PackageConfig;
 
 pub trait ToRustExample {
     fn to_rust_example(&self, spec: &HirSpec) -> anyhow::Result<TokenStream>;
@@ -158,12 +158,8 @@ pub fn to_rust_example_value(
                     let name = name.to_rust_struct();
                     quote!(#name(#(#fields),*))
                 }
-                Record::Enum(StrEnum {
-                    name,
-                    variants,
-                    docs: _docs,
-                }) => {
-                    let variant = variants.first().unwrap();
+                Record::Enum(e) => {
+                    let variant = e.variant_to_name(e.variants.first().unwrap()); // TODO: no unwrap, pass errors instead of panics
                     let variant = variant.to_rust_struct();
                     let model = model.to_rust_struct();
                     quote!(#model::#variant)

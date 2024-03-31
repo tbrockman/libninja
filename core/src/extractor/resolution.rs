@@ -1,5 +1,5 @@
-use openapiv3::{ArrayType, OpenAPI, ReferenceOr, Schema, SchemaKind, SchemaReference};
 use openapiv3 as oa;
+use openapiv3::{ArrayType, OpenAPI, ReferenceOr, Schema, SchemaKind, SchemaReference};
 use tracing::warn;
 
 use mir::Ty;
@@ -14,23 +14,41 @@ pub fn schema_ref_to_ty_already_resolved(
     spec: &OpenAPI,
     schema: &Schema,
 ) -> Ty {
-    if is_primitive(schema, spec) {
-        schema_to_ty(schema, spec)
-    } else {
-        match schema_ref {
-            ReferenceOr::Reference { reference } => {
-                let r = oa::SchemaReference::from_str(reference);
-                match r {
-                    SchemaReference::Schema { schema: s } => Ty::model(&s),
-                    SchemaReference::Property {
-                        schema: _,
-                        property: _,
-                    } => unimplemented!(),
-                }
+    match schema_ref {
+        ReferenceOr::Reference { reference } => {
+            let r = oa::SchemaReference::from_str(reference);
+            match r {
+                SchemaReference::Schema { schema: s } => Ty::model(&s),
+                SchemaReference::Property {
+                    schema: _,
+                    property: _,
+                } => unimplemented!(),
             }
-            ReferenceOr::Item(schema) => schema_to_ty(schema, spec),
         }
+        ReferenceOr::Item(schema) => schema_to_ty(schema, spec),
     }
+
+    // if is_primitive(schema, spec) {
+    //     println!(
+    //         "schema is primitive: {}",
+    //         schema.title.as_ref().unwrap_or(&"no title".to_string())
+    //     );
+    //     schema_to_ty(schema, spec)
+    // } else {
+    //     match schema_ref {
+    //         ReferenceOr::Reference { reference } => {
+    //             let r = oa::SchemaReference::from_str(reference);
+    //             match r {
+    //                 SchemaReference::Schema { schema: s } => Ty::model(&s),
+    //                 SchemaReference::Property {
+    //                     schema: _,
+    //                     property: _,
+    //                 } => unimplemented!(),
+    //             }
+    //         }
+    //         ReferenceOr::Item(schema) => schema_to_ty(schema, spec),
+    //     }
+    // }
 }
 
 /// You probably want schema_ref_to_ty, not this method. Reason being, you want

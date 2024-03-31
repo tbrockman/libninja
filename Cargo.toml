@@ -7,7 +7,6 @@ members = [
     "mir",
     "hir",
     "mir_rust",
+    "deepl_client_rs",
 ]
-exclude = [
-    "commercial",
-]
+exclude = ["commercial"]

@@ -481,27 +481,28 @@ fn extract_key_location(loc: &APIKeyLocation, name: &str) -> AuthLocation {
 
 pub fn extract_security_strategies(spec: &OpenAPI) -> Vec<AuthStrategy> {
     let mut strats = vec![];
-    let schemes = &spec.security_schemes;
-    for requirement in &spec.security {
-        if requirement.is_empty() {
-            strats.push(AuthStrategy::NoAuth);
-            continue;
-        }
-        let (scheme_name, _scopes) = requirement.iter().next().unwrap();
-        let scheme = schemes
-            .get(scheme_name)
-            .expect(&format!("Security scheme {} not found.", scheme_name));
-        debug!("Found security scheme for {}: {:?}", scheme_name, scheme);
-        let scheme = scheme
-            .as_item()
-            .expect("TODO support refs in securitySchemes");
+    let mut processed_schemes: HashMap<String, SecurityScheme> = spec
+        .security_schemes
+        .to_owned()
+        .into_iter()
+        .map(|(k, v)| {
+            (
+                k.clone(),
+                v.as_item()
+                    .expect("TODO support refs in securitySchemes")
+                    .clone(),
+            )
+        })
+        .collect();
+
+    for (name, scheme) in processed_schemes.iter() {
         match scheme {
             SecurityScheme::APIKey { location, name, .. } => {
                 let location = extract_key_location(&location, &name);
                 strats.push(AuthStrategy::Token(TokenAuth {
-                    name: scheme_name.to_string(),
+                    name: name.clone(),
                     fields: vec![AuthParam {
-                        name: name.to_string(),
+                        name: name.clone(),
                         location,
                     }],
                 }));
@@ -529,9 +530,9 @@ pub fn extract_security_strategies(spec: &OpenAPI) -> Vec<AuthStrategy> {
                 description,
             } => {
                 strats.push(AuthStrategy::Token(TokenAuth {
-                    name: scheme_name.to_string(),
+                    name: name.clone(),
                     fields: vec![AuthParam {
-                        name: scheme_name.to_string(),
+                        name: name.clone(),
                         // env_var: scheme_name.to_case(Case::ScreamingSnake),
                         location: AuthLocation::Bearer,
                     }],
@@ -540,6 +541,11 @@ pub fn extract_security_strategies(spec: &OpenAPI) -> Vec<AuthStrategy> {
             SecurityScheme::OpenIDConnect { .. } => {}
         }
     }
+
+    if processed_schemes.len() == 0 {
+        strats.push(AuthStrategy::NoAuth);
+    }
+
     debug!("extracted {} security: {:?}", strats.len(), strats);
     strats
 }
