@@ -7,3 +7,4 @@ openapi-generator/
 commercial/
 *.iml
 .cargo/
+.vscode

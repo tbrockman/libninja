@@ -25,10 +25,6 @@ fn properties_to_fields(
         .iter()
         .map(|(name, field_schema_ref)| {
             let field_schema = field_schema_ref.resolve(spec);
-            println!(
-                "trying to resolve ty for: {}, ref: {:?}",
-                name, field_schema_ref
-            );
             let ty = schema_ref_to_ty_already_resolved(field_schema_ref, spec, field_schema);
             let optional = extractor::is_optional(name, field_schema, schema);
             (
@@ -172,7 +168,6 @@ pub fn extract_records(spec: &OpenAPI, result: &mut HirSpec) -> Result<()> {
 
     spec.add_child_schemas(&mut schema_lookup);
     for (mut name, schema) in schema_lookup {
-        println!("creating record for name: {}, ", name);
         let rec = create_record(&name, schema, spec);
         let name = rec.name().to_string();
         result.schemas.insert(name, rec);
